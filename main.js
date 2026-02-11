@@ -1,4 +1,5 @@
 import { imports } from "./lib/imports.js";
+
 const canvas=document.getElementById("canvas")
 const ctx = canvas.getContext("2d")
 var game=new imports()

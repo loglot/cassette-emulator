@@ -1,0 +1,28 @@
+<head></head>
+<body>
+    <canvas id="canvas"></canvas>
+    <style>
+        /* body{
+            background-color: #00000000;
+        } */
+        canvas{
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform: translate(-50%, -50%); 
+            background-color: #ff909000;
+            width: 150px;
+            height: 90px;
+        }
+    </style>
+<script type="text/javascript">
+window.onerror = function(msg, url, line, col, error) {
+   var extra = !col ? '' : '\ncolumn: ' + col;
+   extra += !error ? '' : '\nerror: ' + error;
+   alert("Error: " + msg + "\nurl: " + url + "\nline: " + line + extra);
+   var suppressErrorAlert = true;
+   return suppressErrorAlert;
+};
+</script>
+    <script type="module" src="tape.js"></script>
+</body>

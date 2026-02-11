@@ -1,0 +1,19 @@
+{
+  "name": "cassette-emulator",
+  "version": "1.0.0",
+  "description": "the emulator of a cassette",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "electron.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "electron": "^40.3.0"
+  }
+}

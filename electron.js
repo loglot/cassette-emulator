@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron')
+const { app, BrowserWindow } = require('electron')
 const path = require('node:path')
 const {tick,game} = require('./main.js')
 var tape=[]
@@ -19,8 +19,9 @@ const createWindow = () => {
 }
 
 app.whenReady().then(() => {
-  tape[0] = createWindow()
+  // tape[0] = createWindow()
   app.on('activate', () => {
+    ticker()
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
     }
@@ -37,4 +38,3 @@ function ticker(){
     tick(tape)
     setTimeout(ticker,100)
 }
-    setTimeout(ticker,0)

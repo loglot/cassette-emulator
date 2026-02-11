@@ -1,8 +1,6 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const path = require('node:path')
-const imports = require('./lib/imports.js')
-console.log(JSON.stringify(imports))
-const game = new imports()
+const {tick,game} = require('./main.js')
 var tape=[]
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -10,6 +8,7 @@ const createWindow = () => {
     height: 90,
     frame: false,
     transparent: true,
+    resizable: false,
     webPreferences: {
       preload: path.join(__dirname, 'lib/renderers/tapepl.js')
     }
@@ -34,14 +33,8 @@ app.on('window-all-closed', () => {
   }
 })
 
-function tick(){
-    for(let i = 0; i<tape.length;i++){
-
-        if(tape[i].webContents){
-            // console.log(JSON.stringify(game.tape))
-            tape[i].webContents.send('draw',game.tape)
-        }
-    }
-    setTimeout(tick,100)
+function ticker(){
+    tick(tape)
+    setTimeout(ticker,100)
 }
-    setTimeout(tick,0)
+    setTimeout(ticker,0)

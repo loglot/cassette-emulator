@@ -5,8 +5,8 @@ var game=new imports()
 canvas.width=150
 canvas.height=90
 function tick(){
-canvas.width=500
-canvas.height=500
+canvas.width=150
+canvas.height=90
     game.tape.draw(ctx)
     requestAnimationFrame(tick)
     if(Math.random()*1000>998){

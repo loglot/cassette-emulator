@@ -1,17 +1,17 @@
-import { imports } from "./lib/imports.js";
 
-const canvas=document.getElementById("canvas")
-const ctx = canvas.getContext("2d")
-var game=new imports()
-canvas.width=150
-canvas.height=90
-function tick(){
-canvas.width=150
-canvas.height=90
-    game.tape.draw(ctx)
-    requestAnimationFrame(tick)
-    if(Math.random()*1000>998){
-        game.tape.flip()
+const imports = require('./lib/imports.js')
+const game = new imports()
+
+exports.game= game
+
+exports.tick = function(tapewins){
+    for(let i = 0; i<tapewins.length;i++){
+
+        if(tapewins[i].webContents){
+            // console.log(JSON.stringify(game.tape))
+            tapewins[i].webContents.send('draw',game.tape)
+            game.tape.tick()
+        }
     }
+
 }
-requestAnimationFrame(tick)

@@ -21,7 +21,6 @@ const createWindow = () => {
 app.whenReady().then(() => {
   // tape[0] = createWindow()
   app.on('activate', () => {
-    ticker()
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
     }
@@ -38,3 +37,4 @@ function ticker(){
     tick(tape)
     setTimeout(ticker,100)
 }
+    ticker()

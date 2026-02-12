@@ -12,11 +12,15 @@ exports.tick = function(){
         init()
         time=0
     }
-            game.tape.tick()
     for(let i = 0; i<tapewins.length;i++){
         if(tapewins[i]&&tapewins[i].webContents){
             // console.log(JSON.stringify(game.tape))
-            tapewins[i].webContents.send('draw',game.tape)
+            tapewins[i].webContents.send('draw',game.tape[i])
+            game.tape[i].tick()
+            if(i==5){
+                var t=tapewins[i].getBounds()
+                tapewins[i].setBounds({ x: 440, y: t.y, width: t.width, height: t.height })
+            }
         }
     }
 
@@ -24,6 +28,7 @@ exports.tick = function(){
 ipcMain.on('makeCassette', make)
 async function make(){
     // console.log(aaaa)
+    game.makeTape()
     tapewins[tapewins.length]=await game.winman.makeWindow("tape")
 
 }

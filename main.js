@@ -13,13 +13,13 @@ exports.tick = function(){
         time=0
     }
     for(let i = 0; i<tapewins.length;i++){
-        if(tapewins[i]&&tapewins[i].webContents){
+        if(tapewins[i]){
+            // console.log(tapewins[i])
+            if(tapewins[i].webContents){
             // console.log(JSON.stringify(game.tape))
             tapewins[i].webContents.send('draw',game.tape[i])
             game.tape[i].tick()
-            if(i==5){
-                var t=tapewins[i].getBounds()
-                tapewins[i].setBounds({ x: 440, y: t.y, width: t.width, height: t.height })
+            
             }
         }
     }
@@ -30,6 +30,14 @@ ipcMain.on('flipCassette', (event) => {
   const webContents = event.sender; 
   const win = BrowserWindow.fromWebContents(webContents)
   game.tape[win.id-1].flip()
+
+})
+ipcMain.on('killCassette', (event) => {
+  const webContents = event.sender; 
+  const win = BrowserWindow.fromWebContents(webContents)
+  game.tape[win.id-1]=false
+  tapewins[win.id-1].close()
+  tapewins[win.id-1]=false
 
 })
 async function flip(event){

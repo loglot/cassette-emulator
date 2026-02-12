@@ -35,6 +35,6 @@ app.on('window-all-closed', () => {
 
 function ticker(){
     tick(tape)
-    setTimeout(ticker,100)
+    setTimeout(ticker,1000/60)
 }
     ticker()

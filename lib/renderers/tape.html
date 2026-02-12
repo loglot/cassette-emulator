@@ -2,10 +2,16 @@
 <body>
     <canvas id="canvas"></canvas>
     <style>
-        body{
-            -webkit-app-region: drag
+        .drag{
+            -webkit-app-region: drag;
+            top:50%;
+            left:50%;
+            transform: translate(-50%, -50%); 
+            width: 245px;
+            height: 45px;
         }
         canvas{
+            cursor: pointer;
             position:absolute;
             top:50%;
             left:50%;
@@ -26,4 +32,6 @@ window.onerror = function(msg, url, line, col, error) {
 </script>
     <script type="module" src="keydrown.js"></script>
     <script type="module" src="tape.js"></script>
+
+    <div class="drag"></div>
 </body>

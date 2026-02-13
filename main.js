@@ -19,17 +19,35 @@ exports.tick = function(){
             // console.log(tape)
             if(tape[0].webContents){
                 tape[0].webContents.send('draw',tape[1])
-                tape[1].tick()
             
             }
+            var pwp = playerwin.getBounds();
+            var twp = tape[0].getBounds();
             if(tape[1].set){
-                    var pwp = playerwin.getBounds();
+                if(game.player.latch){
                     tape[0].setBounds({ x: pwp.x+10, y: pwp.y+10 })
                     tape[0].setIgnoreMouseEvents(true)
-                    // playerwin.setAlwaysOnTop(true)
-                    // tape.setAlwaysOnTop(true)
+                    tape[1].displayState=2
+                    tape[1].tick()
+                }else{
+                    if((Math.abs((pwp.x-10)-twp.x)>50||Math.abs((pwp.y+10)-twp.y)>50)){
+                        tape[1].set=false
+                        tape[1].displayState=0
+                    }else{
+                        tape[0].setBounds({ x: pwp.x+10, y: pwp.y+10 })
+                        tape[0].setIgnoreMouseEvents(false)
+                        tape[1].displayState=1
+
+                    }
+
+                }
             }else{
-                tape[0].setIgnoreMouseEvents(false)
+                if(Math.abs(((pwp.x-10)-twp.x)<10&&Math.abs((pwp.y+10)-twp.y)<10)&&!game.player.latch){
+                    tape[1].set=true
+                }else{
+                    tape[0].setIgnoreMouseEvents(false)
+                    tape[1].displayState=0
+                }
 
             }
         }
@@ -39,6 +57,7 @@ exports.tick = function(){
 
 
 
+ipcMain.on('latchPlayer', ()=>{game.player.latch=!game.player.latch})
 ipcMain.on('makeCassette', make)
 
 onTapeIpc("flip",(tape)=>{

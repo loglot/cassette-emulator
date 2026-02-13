@@ -2,55 +2,82 @@ const { BrowserWindow, ipcMain} = require('electron')
 const imports = require('./lib/imports.js')
 const game = new imports()
     game.init()
-tapewins=[]
+var tapewins=new Set()
+var playerwin
 time=0
 exports.game= game
     console.log("aaa")
 exports.tick = function(){
     time++
-    if(time>10 && tapewins[0]==undefined){
+    if(time>10 && playerwin==undefined){
         init()
         time=0
     }
-    for(let i = 0; i<tapewins.length;i++){
-        if(tapewins[i]){
-            // console.log(tapewins[i])
-            if(tapewins[i].webContents){
-            // console.log(JSON.stringify(game.tape))
-            tapewins[i].webContents.send('draw',game.tape[i])
-            game.tape[i].tick()
+    // console.log((tapewins))
+    for(const tape of tapewins){
+        if(tape){
+            // console.log(tape)
+            if(tape[0].webContents){
+                tape[0].webContents.send('draw',tape[1])
+                tape[1].tick()
             
+            }
+            if(tape[1].set){
+                    var pwp = playerwin.getBounds();
+                    tape[0].setBounds({ x: pwp.x+10, y: pwp.y+10 })
+                    tape[0].setIgnoreMouseEvents(true)
+                    // playerwin.setAlwaysOnTop(true)
+                    // tape.setAlwaysOnTop(true)
+            }else{
+                tape[0].setIgnoreMouseEvents(false)
+
             }
         }
     }
 
 }
+
+
+
 ipcMain.on('makeCassette', make)
-ipcMain.on('flipCassette', (event) => {
-  const webContents = event.sender; 
-  const win = BrowserWindow.fromWebContents(webContents)
-  game.tape[win.id-1].flip()
 
+onTapeIpc("flip",(tape)=>{
+    tape[1].flip()
 })
-ipcMain.on('killCassette', (event) => {
-  const webContents = event.sender; 
-  const win = BrowserWindow.fromWebContents(webContents)
-  game.tape[win.id-1]=false
-  tapewins[win.id-1].close()
-  tapewins[win.id-1]=false
+onTapeIpc("kill",(tape)=>{
+    tape[0].close()
+    tapewins.delete(tape)
+})
 
-})
-async function flip(event){
-  const webContents = event.sender; 
-  const win = BrowserWindow.fromWebContents(webContents)
-  console.log(win.id)
-}
+
+
+
 async function make(){
-    // console.log(aaaa)
-    game.makeTape()
-    tapewins[tapewins.length]=await game.winman.makeWindow("tape")
+    tapewins.add([await game.winman.makeWindow("tape",playerwin),game.makeTape()])
 
 }
 async function init(){
-    tapewins[0]=await game.winman.makeWindow("tape")
+    playerwin=await game.winman.makeWindow("player")
+    tapewins.add([await game.winman.makeWindow("tape",playerwin),game.makeTape(true)])
+    // tapewins.add(await game.winman.makeWindow("tape",playerwin))
 }
+
+
+function onTapeIpc(name, func){
+    ipcMain.on(`${name}Cassette`, (event) => {
+        const webContents = event.sender; 
+        const win = BrowserWindow.fromWebContents(webContents)
+        tapewins.forEach((tape)=>{
+            if(tape[0].id==win.id){
+                func(tape)
+            }
+        })
+    })
+}
+
+
+
+const electron = require("electron");
+electron.app.on("before-quit", (event) => {
+    tapewins=new Set()
+})

@@ -14,6 +14,9 @@ exports.tick = function(){
         time=0
     }
     // console.log((tapewins))
+    if(playerwin && playerwin.webContents){
+        playerwin.webContents.send('draw',game.player)
+    }
     for(const tape of tapewins){
         if(tape){
             // console.log(tape)
@@ -30,9 +33,10 @@ exports.tick = function(){
                     tape[1].displayState=2
                     tape[1].tick()
                 }else{
-                    if((Math.abs((pwp.x-10)-twp.x)>50||Math.abs((pwp.y+10)-twp.y)>50)){
+                    if((Math.abs((pwp.x+10)-twp.x)>40||Math.abs((pwp.y+10)-twp.y)>40)){
                         tape[1].set=false
                         tape[1].displayState=0
+                        game.player.occupied=false
                     }else{
                         tape[0].setBounds({ x: pwp.x+10, y: pwp.y+10 })
                         tape[0].setIgnoreMouseEvents(false)
@@ -42,8 +46,9 @@ exports.tick = function(){
 
                 }
             }else{
-                if(Math.abs(((pwp.x-10)-twp.x)<10&&Math.abs((pwp.y+10)-twp.y)<10)&&!game.player.latch){
+                if(Math.abs(((pwp.x+10)-twp.x)<20&&Math.abs((pwp.y+10)-twp.y)<20)&&!game.player.latch&&!game.player.occupied){
                     tape[1].set=true
+                    game.player.occupied=true
                 }else{
                     tape[0].setIgnoreMouseEvents(false)
                     tape[1].displayState=0
@@ -77,7 +82,7 @@ async function make(){
 }
 async function init(){
     playerwin=await game.winman.makeWindow("player")
-    tapewins.add([await game.winman.makeWindow("tape",playerwin),game.makeTape(true)])
+    make()
     // tapewins.add(await game.winman.makeWindow("tape",playerwin))
 }
 
@@ -99,4 +104,5 @@ function onTapeIpc(name, func){
 const electron = require("electron");
 electron.app.on("before-quit", (event) => {
     tapewins=new Set()
+    playerwin=false
 })
